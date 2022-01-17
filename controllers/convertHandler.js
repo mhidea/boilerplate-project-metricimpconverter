@@ -19,10 +19,12 @@ function ConvertHandler() {
     if (!m[0]) {
       throw 'invalid unit'
     }
-    if (!Object.keys(this.units).includes(m[0])) {
-      throw 'invalid unit'
+    "".toLowerCase
+    if (Object.keys(this.units).includes(m[0].toLowerCase()) ||
+      Object.keys(this.units).includes(m[0].toUpperCase())) {
+      return m[0];
     }
-    return m[0];
+    throw 'invalid unit'
   };
   this.getReturnUnit = function () {
     return this.units[this.getUnit()].to;
@@ -38,7 +40,7 @@ function ConvertHandler() {
 
 
   this.getString = function () {
-    return `${this.getNum()} ${this.units[this.getUnit()].name} converts to ${this.convert()} ${this.units[this.getReturnUnit()].name}`;
+    return `${this.getNum()} ${this.units[this.getUnit()].name} converts to ${this.convert()} ${this.units[this.getReturnUnit()].name}.`;
   };
 
 
