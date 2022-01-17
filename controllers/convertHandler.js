@@ -1,23 +1,35 @@
 function ConvertHandler() {
   this.input = null
   this.getNum = function () {
-    let p = new RegExp('^[^a-z]*(?=[a-z])', 'gi');
-    let result = this.input.match(p);
-    return result[0] ? eval(result[0]) : 1;
+    let noNum = new RegExp('^[a-z]+$', 'g')
+    if (noNum.test(this.input)) {
+      this.input = "1" + this.input
+    }
+    let doubleFraction = new RegExp('[0-9\.]+\/[0-9\.]+\/[0-9\.]+', 'g')
+    if (doubleFraction.test(this.input)) {
+      throw 'invalid number'
+    }
+    let p = new RegExp("^(\\d+(\\.\\d*)?(\/\\d*(\\.\\d*)?)?)+[a-z]*$", 'gi');
+    return eval(p.exec(this.input)[1]);
   };
 
   this.getUnit = function () {
     let p = new RegExp('[a-z]+\$', 'gi')
-    return this.input.match(p)[0];
+    let m = p.exec(this.input)
+    if (!m[0]) {
+      throw 'invalid unit'
+    }
+    if (!Object.keys(this.units).includes(m[0])) {
+      throw 'invalid unit'
+    }
+    return m[0];
   };
   this.getReturnUnit = function () {
     return this.units[this.getUnit()].to;
   };
 
   this.spellOutUnit = function (unit) {
-    let result;
-
-    return result;
+    return this.units[unit].name;
   };
 
   this.convert = function () {
@@ -43,17 +55,17 @@ ConvertHandler.prototype.units = {
 ConvertHandler.prototype.work = function (input) {
   this.input = input;
   try {
-    return {
+    let result = {
       initNum: this.getNum(),
       initUnit: this.getUnit(),
       returnNum: this.convert(),
       returnUnit: this.getReturnUnit(),
       string: this.getString()
     }
+    return result
   } catch (error) {
-
+    return error
   }
-  return { string: "error" }
 }
 
 module.exports = ConvertHandler;
